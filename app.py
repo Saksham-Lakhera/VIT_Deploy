@@ -4,10 +4,13 @@ from transformers import AutoModelForImageClassification
 import torch
 from PIL import Image
 import torchvision.transforms as transforms
-
-
+import gdown
+import os
 @st.cache_resource
 def load_model(model_path):
+    if not os.path.exists(model_path):
+        download_model_from_drive()
+
     try:
         model = AutoModelForImageClassification.from_pretrained(model_path)
         print(f"Successfully loaded model from: {model_path}")
@@ -15,6 +18,17 @@ def load_model(model_path):
     except Exception as e:
         st.error(f"Error loading model from {model_path}: {e}")
         return None
+
+
+def download_model_from_drive():
+    folder_url = "https://drive.google.com/drive/folders/1-NdCmgI32yWusQUBbXlxDv6bgPf8J6gn"
+    output_dir = "model"
+
+    st.write("Downloading model from Google Drive folder...")
+    gdown.download_folder(folder_url, output=output_dir, quiet=False, use_cookies=False)
+
+
+model = load_model("./model")
 
 model = AutoModelForImageClassification.from_pretrained("./model")
 
